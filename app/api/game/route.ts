@@ -116,6 +116,20 @@ function submitDefinition(roomId: string, playerId: string, definition: string) 
   
   // Verificar se todos enviaram definições
   if (room.definitions.length === room.players.length) {
+    // Adicionar definição correta às opções de voto
+    if (room.currentWord && !room.definitions.find(d => d.isCorrect)) {
+      room.definitions.push({
+        id: 'correct-' + Date.now().toString(),
+        authorId: 'system',
+        text: room.currentWord.definition,
+        votes: [],
+        isCorrect: true
+      })
+    }
+    
+    // Embaralhar as definições para que a correta não apareça sempre na mesma posição
+    room.definitions = room.definitions.sort(() => Math.random() - 0.5)
+    
     room.state = 'voting'
   }
   
