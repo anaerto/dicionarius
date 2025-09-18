@@ -8,7 +8,12 @@ export function useSocket() {
 
   useEffect(() => {
     const socketInstance = io({
-      transports: ['websocket', 'polling']
+      path: '/api/socket',
+      transports: ['polling', 'websocket'],
+      forceNew: true,
+      reconnection: true,
+      timeout: 60000,
+      autoConnect: true
     })
 
     socketInstance.on('connect', () => {

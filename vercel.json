@@ -3,13 +3,32 @@
   "framework": "nextjs",
   "functions": {
     "app/api/socket/route.ts": {
-      "maxDuration": 30
+      "maxDuration": 60
     }
   },
   "rewrites": [
     {
       "source": "/socket.io/(.*)",
       "destination": "/api/socket"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/socket",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
     }
   ]
 }

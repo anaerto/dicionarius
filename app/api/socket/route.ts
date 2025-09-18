@@ -1,24 +1,38 @@
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { Server as SocketIOServer } from 'socket.io'
-import { createServer } from 'http'
+import { Server as NetServer } from 'http'
 import { initializeSocket } from '@/lib/socket-server'
 
-let io: SocketIOServer | undefined
+// Global para manter a instância do Socket.io
+declare global {
+  var io: SocketIOServer | undefined
+}
 
 export async function GET(req: NextRequest) {
-  if (!io) {
-    console.log('Inicializando servidor Socket.io...')
+  if (!global.io) {
+    console.log('Inicializando servidor Socket.io para Vercel...')
     
-    // Criar servidor HTTP
-    const httpServer = createServer()
+    // Para Vercel, precisamos usar uma abordagem diferente
+    const httpServer = req.nextUrl.origin
     
-    // Inicializar Socket.io
-    io = initializeSocket(httpServer)
+    // Criar instância Socket.io compatível com Vercel
+    global.io = new SocketIOServer({
+      path: '/api/socket',
+      addTrailingSlash: false,
+      cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+      },
+      transports: ['polling', 'websocket']
+    })
     
-    console.log('Servidor Socket.io inicializado')
+    // Inicializar lógica do jogo
+    initializeSocket(global.io as any)
+    
+    console.log('Servidor Socket.io inicializado para Vercel')
   }
 
-  return new Response('Socket.io server running', { status: 200 })
+  return NextResponse.json({ message: 'Socket.io server running' })
 }
 
 export async function POST(req: NextRequest) {
