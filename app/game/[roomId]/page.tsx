@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { useGameRoom } from '@/lib/socket-client'
+import { useGameRoom } from '@/lib/game-client'
 import { RoundResult } from '@/lib/types'
 import QRCodeDisplay from '@/components/game/QRCodeDisplay'
 import PlayersList from '@/components/game/PlayersList'
@@ -15,9 +15,9 @@ export default function GameHostPage() {
   const [roundResult, setRoundResult] = useState<RoundResult | null>(null)
 
   const {
-    socket,
-    isConnected,
     room,
+    loading,
+    isConnected,
     error,
     startGame,
     nextRound,
@@ -30,25 +30,26 @@ export default function GameHostPage() {
     }
   }, [roomId])
 
+  // Detectar mudanças de estado para mostrar resultados
   useEffect(() => {
-    if (!socket) return
-
-    const handleRoundEnded = (result: RoundResult) => {
+    if (room?.state === 'results' && !roundResult) {
+      // Simular resultado da rodada
+      const result: RoundResult = {
+        round: room.currentRound,
+        word: room.currentWord || { word: '', definition: '' },
+        definitions: room.definitions,
+        scores: room.players.reduce((acc, player) => {
+          acc[player.id] = player.score
+          return acc
+        }, {} as { [playerId: string]: number })
+      }
       setRoundResult(result)
     }
-
-    const handleGameEnded = (finalScores: { [playerId: string]: number }) => {
-      console.log('Jogo finalizado:', finalScores)
+    
+    if (room?.state === 'finished') {
+      console.log('Jogo finalizado:', room.players.map(p => ({ name: p.name, score: p.score })))
     }
-
-    socket.on('round-ended', handleRoundEnded)
-    socket.on('game-ended', handleGameEnded)
-
-    return () => {
-      socket.off('round-ended', handleRoundEnded)
-      socket.off('game-ended', handleGameEnded)
-    }
-  }, [socket])
+  }, [room?.state, roundResult, room])
 
   const handleStartGame = () => {
     if (room && room.players.length >= 2) {
@@ -63,12 +64,12 @@ export default function GameHostPage() {
 
   const canStartGame = room && room.players.length >= 2 && room.state === 'waiting'
 
-  if (!isConnected) {
+  if (loading || !isConnected) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Conectando ao servidor...</p>
+          <p className="text-gray-600">Carregando jogo...</p>
         </div>
       </div>
     )
