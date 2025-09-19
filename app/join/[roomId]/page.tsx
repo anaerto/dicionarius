@@ -20,7 +20,6 @@ export default function JoinGamePage() {
     loading,
     isConnected,
     error,
-    connectionStatus,
     joinRoom,
     submitDefinition,
     submitVote,
