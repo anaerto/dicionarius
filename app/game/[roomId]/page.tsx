@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { useGameRoom } from '@/lib/game-client'
+import { useGameSocket } from '@/lib/socket-client'
 import { RoundResult } from '@/lib/types'
 import QRCodeDisplay from '@/components/game/QRCodeDisplay'
 import PlayersList from '@/components/game/PlayersList'
@@ -19,11 +19,11 @@ export default function GameHostPage() {
     loading,
     isConnected,
     error,
+    connectionStatus,
     startGame,
     nextRound,
-    restartGame,
     clearError
-  } = useGameRoom(roomId)
+  } = useGameSocket(roomId)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -63,10 +63,7 @@ export default function GameHostPage() {
     nextRound()
   }
 
-  const handleRestartGame = () => {
-    setRoundResult(null)
-    restartGame()
-  }
+
 
   const canStartGame = room && room.players.length >= 2 && room.state === 'waiting'
 
@@ -303,12 +300,7 @@ export default function GameHostPage() {
               </div>
             </div>
 
-            <button
-              onClick={handleRestartGame}
-              className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 font-semibold"
-            >
-              Nova Partida
-            </button>
+
           </div>
         )}
       </div>
