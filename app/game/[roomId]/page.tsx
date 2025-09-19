@@ -182,7 +182,7 @@ export default function GameHostPage() {
             </div>
             
             <div className="grid md:grid-cols-2 gap-6">
-              <DefinitionsList definitions={room.definitions} showVotes={true} />
+              <DefinitionsList definitions={room.definitions} showVotes={true} showCorrectAnswer={false} />
               <PlayersList players={room.players} gameState={room.state} />
             </div>
           </div>
@@ -209,7 +209,8 @@ export default function GameHostPage() {
             <DefinitionsList 
               definitions={roundResult.definitions} 
               showVotes={true} 
-              showAuthors={true} 
+              showAuthors={true}
+              showCorrectAnswer={true}
             />
 
             {/* Pontuação da rodada */}

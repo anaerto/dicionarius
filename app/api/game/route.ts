@@ -204,6 +204,11 @@ function nextRound(roomId: string) {
     room.state = 'defining'
     room.definitions = []
     
+    // Resetar estado dos jogadores para nova rodada
+    room.players.forEach(player => {
+      player.hasVoted = false
+    })
+    
     // Nova palavra (simplificado)
     const words = [
       { id: '1', word: 'Petricor', definition: 'O cheiro característico da terra após a chuva' },

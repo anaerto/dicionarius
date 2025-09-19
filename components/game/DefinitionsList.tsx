@@ -4,12 +4,14 @@ interface DefinitionsListProps {
   definitions: Definition[]
   showVotes?: boolean
   showAuthors?: boolean
+  showCorrectAnswer?: boolean
 }
 
 export default function DefinitionsList({ 
   definitions, 
   showVotes = false, 
-  showAuthors = false 
+  showAuthors = false,
+  showCorrectAnswer = false
 }: DefinitionsListProps) {
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
@@ -24,7 +26,7 @@ export default function DefinitionsList({
           <div 
             key={definition.id}
             className={`p-3 rounded border-l-4 ${
-              definition.isCorrect 
+              showCorrectAnswer && definition.isCorrect 
                 ? 'border-green-500 bg-green-50' 
                 : 'border-blue-500 bg-blue-50'
             }`}
@@ -35,7 +37,7 @@ export default function DefinitionsList({
                   <span className="font-bold text-gray-700">
                     {letters[index]}:
                   </span>
-                  {definition.isCorrect && (
+                  {showCorrectAnswer && definition.isCorrect && (
                     <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
                       CORRETA
                     </span>
