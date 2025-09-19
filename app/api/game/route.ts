@@ -44,6 +44,9 @@ export async function POST(req: NextRequest) {
       case 'next-round':
         return nextRound(roomId)
       
+      case 'restart-game':
+        return restartGame(roomId)
+      
       default:
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
     }
@@ -222,6 +225,30 @@ function nextRound(roomId: string) {
   return NextResponse.json(room)
 }
 
+function restartGame(roomId: string) {
+  const room = gameRooms.get(roomId)
+  if (!room) {
+    return NextResponse.json({ error: 'Room not found' }, { status: 404 })
+  }
+  
+  // Resetar sala mantendo os jogadores
+  room.state = 'waiting'
+  room.currentRound = 0
+  room.definitions = []
+  room.currentWord = undefined
+  room.roundResults = []
+  
+  // Resetar estado dos jogadores
+  room.players.forEach(player => {
+    player.score = 0
+    player.hasSubmittedDefinition = false
+    player.hasVoted = false
+  })
+  
+  gameRooms.set(roomId, room)
+  return NextResponse.json(room)
+}
+
 function calculateScores(room: GameRoom) {
   if (!room.currentWord) return
   
@@ -246,10 +273,12 @@ function calculateScores(room: GameRoom) {
       player.score += 1
     }
     
-    // 2 pontos por cada voto na sua definição falsa
+    // 2 pontos por cada voto na sua definição falsa (exceto o próprio voto)
     const playerDef = room.definitions.find(d => d.authorId === player.id)
     if (playerDef) {
-      player.score += playerDef.votes.length * 2
+      // Filtrar votos para excluir o voto do próprio jogador
+      const validVotes = playerDef.votes.filter(voterId => voterId !== player.id)
+      player.score += validVotes.length * 2
     }
   })
 }

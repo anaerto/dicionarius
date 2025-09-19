@@ -21,6 +21,7 @@ export default function GameHostPage() {
     error,
     startGame,
     nextRound,
+    restartGame,
     clearError
   } = useGameRoom(roomId)
 
@@ -60,6 +61,11 @@ export default function GameHostPage() {
   const handleNextRound = () => {
     setRoundResult(null)
     nextRound()
+  }
+
+  const handleRestartGame = () => {
+    setRoundResult(null)
+    restartGame()
   }
 
   const canStartGame = room && room.players.length >= 2 && room.state === 'waiting'
@@ -298,7 +304,7 @@ export default function GameHostPage() {
             </div>
 
             <button
-              onClick={() => window.location.reload()}
+              onClick={handleRestartGame}
               className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 font-semibold"
             >
               Nova Partida

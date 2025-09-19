@@ -171,6 +171,17 @@ export function useGameRoom(roomId: string) {
     }
   }, [apiCall, roomId])
 
+  const restartGame = useCallback(async () => {
+    try {
+      const result = await apiCall('restart-game', { roomId })
+      setRoom(result)
+      return result
+    } catch (err) {
+      console.error('Failed to restart game:', err)
+      throw err
+    }
+  }, [apiCall, roomId])
+
   return {
     room,
     playerId,
@@ -182,6 +193,7 @@ export function useGameRoom(roomId: string) {
     submitDefinition,
     submitVote,
     nextRound,
+    restartGame,
     clearError
   }
 }
