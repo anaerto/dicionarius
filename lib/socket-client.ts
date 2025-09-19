@@ -206,7 +206,7 @@ export function useGameSocket(roomId: string) {
 
     const handleError = (message: string) => {
       console.error('Erro do servidor:', message)
-      setError(message)
+      // O erro será tratado pelo hook useSocket
     }
 
     // Registrar listeners
@@ -230,7 +230,7 @@ export function useGameSocket(roomId: string) {
       socket.off('game-ended', handleGameEnded)
       socket.off('error', handleError)
     }
-  }, [socket, setError])
+  }, [socket])
 
   // Funções do jogo
   const joinRoom = useCallback(async (playerName: string) => {
