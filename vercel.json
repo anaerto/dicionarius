@@ -1,20 +1,14 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "next build",
   "framework": "nextjs",
   "functions": {
-    "app/api/socket/route.ts": {
-      "maxDuration": 60
+    "app/api/game/[roomId]/route.ts": {
+      "maxDuration": 30
     }
   },
-  "rewrites": [
-    {
-      "source": "/socket.io/(.*)",
-      "destination": "/api/socket"
-    }
-  ],
   "headers": [
     {
-      "source": "/api/socket",
+      "source": "/api/(.*)",
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",

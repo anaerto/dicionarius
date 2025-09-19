@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { useGameSocket } from '@/lib/socket-client'
+import { useGameAPI } from '@/lib/game-api'
 import { RoundResult } from '@/lib/types'
 import QRCodeDisplay from '@/components/game/QRCodeDisplay'
 import PlayersList from '@/components/game/PlayersList'
@@ -19,11 +19,10 @@ export default function GameHostPage() {
     loading,
     isConnected,
     error,
-    connectionStatus,
     startGame,
     nextRound,
     clearError
-  } = useGameSocket(roomId)
+  } = useGameAPI(roomId)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

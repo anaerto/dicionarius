@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { useGameSocket } from '@/lib/socket-client'
+import { useGameAPI } from '@/lib/game-api'
 import { RoundResult } from '@/lib/types'
 import DefinitionForm from '@/components/game/DefinitionForm'
 import VotingForm from '@/components/game/VotingForm'
@@ -25,7 +25,7 @@ export default function JoinGamePage() {
     submitDefinition,
     submitVote,
     clearError
-  } = useGameSocket(roomId)
+  } = useGameAPI(roomId)
 
   // Detectar mudanças de estado
   useEffect(() => {
